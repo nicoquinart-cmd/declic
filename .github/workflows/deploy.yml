@@ -32,6 +32,9 @@ jobs:
       - name: Vérifier la génération IA réelle dans Chrome
         run: npm run test:ai
         timeout-minutes: 15
+      - name: Vérifier la voix française neuronale dans Chrome
+        run: npm run test:audio
+        timeout-minutes: 8
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -1,4 +1,4 @@
-import {mkdir,copyFile,readdir} from 'node:fs/promises';
+import {mkdir,copyFile,readdir,readFile,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 const root=new URL('../',import.meta.url);
 const dest=new URL('public/ocr/',root);
@@ -15,3 +15,11 @@ for(const name of await readdir(runtime)) {
   if(name.startsWith('ort-wasm') && (name.endsWith('.wasm') || name.endsWith('.mjs')))
     await copyFile(new URL(name,runtime),new URL(name,aiDest));
 }
+
+const speechDest=new URL('public/speech/',root);
+await mkdir(speechDest,{recursive:true});
+const piperRoot=new URL('node_modules/@diffusionstudio/piper-wasm/build/',root);
+for(const name of ['piper_phonemize.wasm','piper_phonemize.data'])
+  await copyFile(new URL(name,piperRoot),new URL(name,speechDest));
+const factory=await readFile(new URL('piper_phonemize.js',piperRoot),'utf8');
+await writeFile(new URL('piper.js',speechDest),factory+'\nexport { createPiperPhonemize };\n');

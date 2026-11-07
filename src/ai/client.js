@@ -42,3 +42,7 @@ export function generateBrowserRevisions(text, onProgress) {
     worker.postMessage({ text, baseUrl: new URL(import.meta.env.BASE_URL, location.href).href });
   });
 }
+
+export function releaseIdleBrowserAI() {
+  if (!pendingReject) { worker?.terminate(); worker = undefined; }
+}
