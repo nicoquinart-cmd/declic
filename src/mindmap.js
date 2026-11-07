@@ -6,6 +6,8 @@ const COLORS = [
   {line:'#7395c1',fill:'#e9f0fb'}, {line:'#c08289',fill:'#fbecef'},
 ];
 let centralTitle = 'Mon cours';
+export const getMindMapTitle=()=>centralTitle;
+export function setMindMapTitle(value){centralTitle=typeof value==='string'&&value.trim()?value.trim().slice(0,80):'Mon cours';}
 function element(tag, attributes={}, text) {
   const node=document.createElementNS(NS,tag);
   for(const [key,value] of Object.entries(attributes)) node.setAttribute(key,String(value));

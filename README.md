@@ -17,7 +17,7 @@ npm run dev
 npm run build
 ```
 
-Le serveur Vite affiche son port (5173 par défaut). Aucun compte ni service payant requis. Les documents restent en mémoire dans le navigateur ; recharger la page efface le travail. Les PDF scannés doivent être importés sous forme d’images de leurs pages. Les fichiers OCR (moteur et langues français/anglais) sont installés via npm puis servis localement. Aucune connexion externe n’est nécessaire pour reconnaître les photos après installation.
+Le serveur Vite affiche son port (5173 par défaut). Aucun compte ni service payant requis. Les cours non enregistrés restent en mémoire ; recharger la page efface ce travail. Le bouton Enregistrer sauvegarde le texte et les révisions sur cet appareil, ou dans le compte si Google est configuré et connecté. Les PDF scannés doivent être importés sous forme d’images de leurs pages. Les fichiers OCR (moteur et langues français/anglais) sont installés via npm puis servis localement. Aucune connexion externe n’est nécessaire pour reconnaître les photos après installation.
 
 ## Modes de génération
 
@@ -31,7 +31,7 @@ Le mode « Voix de l’appareil » reste disponible en secours, avec choix d’u
 
 ## Périmètre actuel
 
-Prototype de développement : pas de comptes, de stockage persistant, de synchronisation ni de serveur IA distant. Le proxy Ollama est fourni pour `npm run dev` uniquement ; une mise en production nécessite un serveur dédié et un contrôle d’accès. Ne pas exposer ce serveur à un réseau public sans protection.
+Prototype de développement : la synchronisation Google nécessite un projet Firebase configuré ; aucun serveur IA distant n’est utilisé. Le proxy Ollama est fourni pour `npm run dev` uniquement ; une mise en production nécessite un serveur dédié et un contrôle d’accès. Ne pas exposer ce serveur à un réseau public sans protection.
 
 ## Publication gratuite avec GitHub Pages
 
@@ -57,3 +57,9 @@ Le moteur WebAssembly est servi localement avec l’application ; les modèles s
 La carte mentale présente le sujet central, les notions et leurs explications sous forme de branches colorées. Le sujet central est modifiable. Le zoom, le déplacement, l’affichage agrandi et le téléchargement SVG fonctionnent sans service externe.
 
 La carte classe désormais les notions par thématiques, avec la hiérarchie sujet → thématique → sous-titre → explication. L’IA propose deux grands thèmes adaptés au cours. Si une notion n’a pas de thème (notamment en mode Essentiel), un classement par vocabulaire fournit des catégories de révision ; ce classement automatique doit être vérifié. Les regroupements sont conservés dans les exports SVG et Markdown.
+
+## Comptes Google et bibliothèque
+
+La bibliothèque « Mes cours » conserve le texte et les révisions. Sans connexion, la sauvegarde est locale à cet appareil. Avec Firebase configuré, Google permet une bibliothèque privée synchronisée entre appareils. La sauvegarde se fait explicitement avec le bouton Enregistrer ; les documents originaux et l’audio WAV ne sont pas téléversés.
+
+La configuration du projet, de Google, des règles privées et des variables GitHub est décrite dans [FIREBASE_SETUP.md](FIREBASE_SETUP.md). La connexion ne fonctionne pas tant que ces étapes ne sont pas effectuées. Ne jamais mettre de clé de compte de service dans l’application.

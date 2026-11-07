@@ -28,7 +28,20 @@ jobs:
       - run: npm run build
         env:
           DEPLOY_BASE: /declic/
+          VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_APP_ID: ${{ vars.VITE_FIREBASE_APP_ID }}
       - run: npm test
+      - name: Vérifier la bibliothèque de cours
+        run: npm run test:library
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Vérifier l’isolation des comptes dans Firestore
+        run: npm run test:rules
+        timeout-minutes: 5
       - name: Vérifier la carte mentale
         run: npm run test:mindmap
       - name: Vérifier la génération IA réelle dans Chrome
