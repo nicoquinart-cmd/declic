@@ -26,7 +26,7 @@ export function generateBrowserRevisions(text, onProgress) {
       if (data.type === 'progress') onProgress(data.message);
       if (data.type === 'result') {
         pendingReject = undefined;
-        resolve({ ...data.revisions, mode: 'Généré par IA sur cet appareil · vérifie avec ton cours' });
+        resolve({ ...data.revisions, mode: 'Notions rédigées par IA sur cet appareil · fiches, carte et audio construits à partir de ces notions' });
       }
       if (data.type === 'error') {
         const message = data.message;

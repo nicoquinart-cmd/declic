@@ -42,7 +42,7 @@ self.onmessage = async ({ data: { text, baseUrl } }) => {
       },
     });
     const output = await generator(revisionMessages(text), {
-      max_new_tokens: 1400, do_sample: false, repetition_penalty: 1.05,
+      max_new_tokens: 500, do_sample: false, repetition_penalty: 1.05,
       return_full_text: false, streamer,
     });
     const generated = output[0]?.generated_text;
