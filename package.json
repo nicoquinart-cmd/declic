@@ -18,7 +18,8 @@
     "test:library": "node tests/browser-library.mjs",
     "test:auth": "node tests/browser-auth.mjs",
     "test:sheets": "node tests/browser-sheets.mjs",
-    "test:quiz": "node tests/browser-quiz.mjs"
+    "test:quiz": "node tests/browser-quiz.mjs",
+    "test:agenda": "node tests/browser-agenda.mjs"
   },
   "dependencies": {
     "@diffusionstudio/piper-wasm": "^1.0.0",

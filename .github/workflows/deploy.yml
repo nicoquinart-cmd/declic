@@ -53,6 +53,8 @@ jobs:
         timeout-minutes: 5
       - name: Vérifier les fiches modifiables et leur PDF
         run: npm run test:sheets
+      - name: Vérifier l’agenda et le rappel
+        run: npm run test:agenda
       - name: Vérifier les quiz personnalisés
         run: npm run test:quiz
       - name: Vérifier la carte mentale

@@ -1,3 +1,4 @@
+import {mountAgenda} from '../agenda/ui.js';
 import {accountClient,googleConfigured,accountError} from './firebase.js';
 import {localLibrary} from './local.js';
 import {courseDate} from './course.js';
@@ -10,6 +11,7 @@ export async function mountAccount(editor,{configured=googleConfigured,connect=a
   document.querySelector('.workspace .panel').prepend(toolbar);
   const navigation=document.createElement('div');navigation.className='library-navigation';navigation.innerHTML='<button id="new-course" class="nav active">＋ Nouveau cours</button><button id="show-library" class="nav">▤ Mes cours</button>';
   document.querySelector('aside .nav').replaceWith(navigation);
+  const agenda=mountAgenda(navigation);agenda.setOwner(null);
   const dialog=document.createElement('dialog');dialog.className='library-dialog';
   dialog.innerHTML='<div class="library-header"><div><h2>Mes cours enregistrés</h2><p id="library-scope" class="hint"></p></div><button class="button secondary" id="close-library">Fermer</button></div><p id="library-status" class="hint" role="status"></p><div id="course-list"></div><div class="library-footer"><button id="refresh-library" class="button secondary">Actualiser</button><button id="more-courses" class="button secondary" hidden>Voir les suivants</button></div>';
   document.body.append(dialog);
@@ -109,7 +111,7 @@ export async function mountAccount(editor,{configured=googleConfigured,connect=a
       unsubscribe?.();
       unsubscribe=cloud.listen(value=>{
         const previous=user?.uid;
-        epoch++;user=value;ready=true;cursor=null;
+        epoch++;user=value;ready=true;cursor=null;agenda.setOwner(value?.uid);
         if(previous&&previous!==value?.uid){editor.clear();resetCurrent();dialog.close();}
         else if(currentOwner&&currentOwner!==owner())resetCurrent(false);
         $('#course-list').replaceChildren();$('#more-courses').hidden=true;
