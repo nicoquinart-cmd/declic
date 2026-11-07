@@ -55,3 +55,5 @@ Le moteur WebAssembly est servi localement avec l’application ; les modèles s
 `npm run test:audio` vérifie dans Chrome la génération d’une courte phrase française avec le vrai modèle, le décodage du WAV, sa durée et la présence d’un signal. `node tests/browser-audio.mjs --simulate` teste les contrôles avec un worker simulé ; `--offline` vérifie le message d’erreur et le secours sans téléchargement réussi. Les tests automatiques ne mesurent pas la perception du naturel de la voix.
 
 La carte mentale présente le sujet central, les notions et leurs explications sous forme de branches colorées. Le sujet central est modifiable. Le zoom, le déplacement, l’affichage agrandi et le téléchargement SVG fonctionnent sans service externe.
+
+La carte classe désormais les notions par thématiques, avec la hiérarchie sujet → thématique → sous-titre → explication. L’IA propose deux grands thèmes adaptés au cours. Si une notion n’a pas de thème (notamment en mode Essentiel), un classement par vocabulaire fournit des catégories de révision ; ce classement automatique doit être vérifié. Les regroupements sont conservés dans les exports SVG et Markdown.
