@@ -1,5 +1,7 @@
 # Déclic
 
+Sélectionne ou dépose plusieurs PDF et photos à la fois (20 Mo par fichier). Les documents sont traités dans l’ordre et leur texte est ajouté aux notes déjà présentes. Une erreur sur un fichier ne bloque pas les suivants ; la liste indique les imports réussis et les échecs. Le bouton Effacer vide le texte et cette liste.
+
 Application de révision en français : import de PDF texte et de photos (OCR français/anglais), résumé, fiches à déplier, carte mentale structurée, lecture vocale et export Markdown.
 
 ## Démarrage
