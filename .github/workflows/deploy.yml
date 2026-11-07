@@ -13,6 +13,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,10 +21,17 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
       - uses: actions/configure-pages@v5
       - run: npm run build
         env:
           DEPLOY_BASE: /declic/
+      - run: npm test
+      - name: Vérifier la génération IA réelle dans Chrome
+        run: npm run test:ai
+        timeout-minutes: 15
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
