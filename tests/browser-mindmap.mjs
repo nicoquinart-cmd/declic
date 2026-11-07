@@ -19,15 +19,15 @@ try{
  const initial=await svg.getAttribute('viewBox');await page.locator('.mindmap-view').getByRole('button',{name:'Zoomer',exact:true}).click();assert.notEqual(await svg.getAttribute('viewBox'),initial);
  const canvas=page.locator('.mindmap-view .mindmap-canvas');await canvas.scrollIntoViewIfNeeded();const bounds=await canvas.boundingBox();const zoomed=await svg.getAttribute('viewBox');await page.mouse.move(bounds.x+100,bounds.y+100);await page.mouse.down();await page.mouse.move(bounds.x+160,bounds.y+125);await page.mouse.up();assert.notEqual(await svg.getAttribute('viewBox'),zoomed);
  await page.locator('.mindmap-view').getByRole('button',{name:'Recentrer'}).click();assert.equal(await svg.getAttribute('viewBox'),initial);
- await page.getByRole('button',{name:'Agrandir'}).click();await page.locator('dialog').waitFor({state:'visible'});assert.equal(await page.locator('dialog .mindmap-topic').count(),branches);
+ await page.getByRole('button',{name:'Agrandir'}).click();await page.locator('.mindmap-dialog').waitFor({state:'visible'});assert.equal(await page.locator('.mindmap-dialog .mindmap-topic').count(),branches);
  if(process.env.MINDMAP_SCREENSHOT)await page.screenshot({path:process.env.MINDMAP_SCREENSHOT,fullPage:true});
- await page.getByRole('button',{name:'Fermer',exact:true}).click();assert.equal(await page.locator('dialog').isVisible(),false);
+ await page.getByRole('button',{name:'Fermer',exact:true}).click();assert.equal(await page.locator('.mindmap-dialog').isVisible(),false);
  const download=page.waitForEvent('download');await page.getByRole('button',{name:'SVG'}).click();const file=await download;assert.equal(file.suggestedFilename(),'declic-carte-mentale.svg');const path=await file.path();const contents=await readFile(path,'utf8');
  assert.match(contents,/Biologie végétale/);assert.ok(!contents.includes('<script'));
  const parsed=await page.evaluate(xml=>{const doc=new DOMParser().parseFromString(xml,'image/svg+xml');return {errors:doc.querySelectorAll('parsererror').length,branches:doc.querySelectorAll('.mindmap-topic').length};},contents);assert.equal(parsed.errors,0);assert.equal(parsed.branches,branches);
  await page.locator('#mindmap-title').fill('<img src=x onerror=alert(1)>');await page.locator('#mindmap-title').press('Tab');assert.equal(await page.locator('#mindmap img').count(),0);
  await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
- await page.getByRole('button',{name:'Agrandir'}).click();assert.ok(await page.locator('dialog').isVisible());await page.keyboard.press('Escape');assert.equal(await page.locator('dialog').isVisible(),false);assert.deepEqual(errors,[]);
+ await page.getByRole('button',{name:'Agrandir'}).click();assert.ok(await page.locator('.mindmap-dialog').isVisible());await page.keyboard.press('Escape');assert.equal(await page.locator('.mindmap-dialog').isVisible(),false);assert.deepEqual(errors,[]);
  console.log('OK : branches reliées, textes contenus dans les nœuds, sujet modifiable, zoom, déplacement, vue agrandie, SVG et mobile.');
 }catch(error){console.error(`::error::${String(error.message).replaceAll('\n',' ')}`);process.exitCode=1;}
 finally{await browser?.close();server.kill();}
