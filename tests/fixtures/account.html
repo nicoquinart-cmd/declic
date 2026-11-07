@@ -5,7 +5,7 @@ import '../../src/style.css';
 import {mountAccount} from '../../src/account/ui.js';
 // This fixture tests UI reactions only. It does not authenticate with Google.
 let listener,connects=0,source='Notes privées de test',clears=0;
-window.authFixture={behavior:'configuration',calls:0,getSource:()=>source,getClears:()=>clears};
+window.authFixture={behavior:'configuration',calls:0,getSource:()=>source,getClears:()=>clears,notifyGuest:()=>listener(null)};
 const client={
  listen(callback){listener=callback;queueMicrotask(()=>callback(null));return()=>{};},
  login(){window.authFixture.calls++;const behavior=window.authFixture.behavior;if(behavior==='pending')return new Promise(resolve=>{window.authFixture.resolveLogin=()=>{listener({uid:'test-alice',displayName:'Élève test'});resolve();};});const code=behavior==='blocked'?'auth/popup-blocked':'auth/configuration-not-found';return Promise.reject(Object.assign(new Error('Fixture de test'),{code}));},

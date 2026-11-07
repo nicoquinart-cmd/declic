@@ -8,6 +8,7 @@ try{
  browser=await chromium.launch({...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{channel:'chrome'}),headless:true,args:['--no-sandbox']});
  const page=await browser.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
  await page.goto('http://127.0.0.1:4179/tests/fixtures/account.html');await page.waitForFunction(()=>window.authFixture?.ready);
+ await page.locator('#show-agenda').click();await page.locator('.agenda-form [name=title]').fill('Saisie en cours');await page.evaluate(()=>window.authFixture.notifyGuest());assert.equal(await page.locator('.agenda-dialog').evaluate(dialog=>dialog.open),true);assert.equal(await page.locator('.agenda-form [name=title]').inputValue(),'Saisie en cours');await page.locator('.agenda-dialog [data-close]').click();
  await page.locator('#google-login').click();await page.waitForFunction(()=>document.querySelector('#auth-feedback-text').textContent.includes('auth/configuration-not-found'));
  assert.equal(await page.locator('#auth-feedback').isVisible(),true);assert.match(await page.locator('#auth-feedback-text').textContent(),/Authentication/);assert.equal(await page.locator('#google-login').isEnabled(),true);assert.equal(await page.evaluate(()=>window.authFixture.calls),1);
  await page.evaluate(()=>{window.authFixture.behavior='blocked';});await page.locator('#google-login').click();await page.waitForFunction(()=>document.querySelector('#auth-feedback-text').textContent.includes('Chrome ou Safari'));
