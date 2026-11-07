@@ -1,0 +1,16 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Test de la connexion</title></head><body>
+<aside><div class="nav">Mon espace</div></aside><main><header><span>Déclic</span><span class="badge">Test</span></header><div class="workspace"><section class="panel"></section></div></main>
+<script type="module">
+import '../../src/style.css';
+import {mountAccount} from '../../src/account/ui.js';
+// This fixture tests UI reactions only. It does not authenticate with Google.
+let listener,connects=0,source='Notes privées de test',clears=0;
+window.authFixture={behavior:'configuration',calls:0,getSource:()=>source,getClears:()=>clears};
+const client={
+ listen(callback){listener=callback;queueMicrotask(()=>callback(null));return()=>{};},
+ login(){window.authFixture.calls++;const behavior=window.authFixture.behavior;if(behavior==='pending')return new Promise(resolve=>{window.authFixture.resolveLogin=()=>{listener({uid:'test-alice',displayName:'Élève test'});resolve();};});const code=behavior==='blocked'?'auth/popup-blocked':'auth/configuration-not-found';return Promise.reject(Object.assign(new Error('Fixture de test'),{code}));},
+ async logout(){listener(null);},async list(){return{courses:[],more:false};},
+};
+await mountAccount({isBusy:()=>false,snapshot:()=>({source,revisions:null}),clear(){source='';clears++;},open(){}},{configured:true,connect:async()=>{connects++;if(new URLSearchParams(location.search).has('fail')&&connects===1)throw Object.assign(new Error('Fixture réseau'),{code:'auth/network-request-failed'});return client;}});
+window.authFixture.ready=true;
+</script></body></html>

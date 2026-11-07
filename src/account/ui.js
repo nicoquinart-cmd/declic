@@ -1,7 +1,7 @@
 import {accountClient,googleConfigured,accountError} from './firebase.js';
 import {localLibrary} from './local.js';
 import {courseDate} from './course.js';
-export async function mountAccount(editor) {
+export async function mountAccount(editor,{configured=googleConfigured,connect=accountClient}={}) {
   const account=document.createElement('div');account.className='account-controls';
   account.innerHTML='<span id="account-name"></span><button id="google-login" class="button secondary">Connexion Google</button><button id="google-logout" class="link" hidden>Se déconnecter</button>';
   document.querySelector('header .badge').replaceWith(account);
@@ -14,12 +14,23 @@ export async function mountAccount(editor) {
   dialog.innerHTML='<div class="library-header"><div><h2>Mes cours enregistrés</h2><p id="library-scope" class="hint"></p></div><button class="button secondary" id="close-library">Fermer</button></div><p id="library-status" class="hint" role="status"></p><div id="course-list"></div><div class="library-footer"><button id="refresh-library" class="button secondary">Actualiser</button><button id="more-courses" class="button secondary" hidden>Voir les suivants</button></div>';
   document.body.append(dialog);
   const $=selector=>document.querySelector(selector);
-  let user=null,cloud=null,ready=!googleConfigured,pending=false,currentId=null,currentOwner=null,epoch=0,cursor=null;
+  let user=null,cloud=null,ready=!configured,pending=false,initializing=false,connecting=false,unsubscribe=null,currentId=null,currentOwner=null,epoch=0,cursor=null;
+  const feedback=document.createElement('section');feedback.id='auth-feedback';feedback.hidden=true;
+  feedback.innerHTML='<button id="close-auth-feedback" class="link" aria-label="Fermer le message de connexion">×</button><strong id="auth-feedback-title"></strong><p id="auth-feedback-text"></p>';
+  feedback.setAttribute('aria-live','polite');document.querySelector('header').after(feedback);
+  $('#close-auth-feedback').onclick=()=>{feedback.hidden=true;};
+  const showAuth=(message,type='info')=>{
+    feedback.hidden=false;feedback.dataset.type=type;feedback.setAttribute('role',type==='error'?'alert':'status');
+    $('#auth-feedback-title').textContent=type==='error'?'Connexion Google impossible':type==='success'?'Connexion Google':'Connexion Google en cours';
+    $('#auth-feedback-text').textContent=message;
+  };
+  const showAuthError=error=>{const message=accountError(error)+(error?.code?` [${error.code}]`:'');showAuth(message,'error');say(message);};
   const owner=()=>user?.uid||'device';
   const say=message=>{$('#account-status').textContent=message;};
   const update=()=>{
-    $('#google-login').hidden=!!user;$('#google-login').disabled=!googleConfigured||!ready||pending||!cloud;
-    $('#google-login').textContent=googleConfigured?'Connexion Google':'Connexion Google à venir';
+    $('#google-login').hidden=!!user;$('#google-login').disabled=initializing||pending||!ready;
+    $('#google-login').setAttribute('aria-busy',String(initializing||connecting));
+    $('#google-login').textContent=connecting?'Connexion en cours…':initializing||!ready?'Chargement de Google…':configured&&!cloud?'Réessayer Google':'Connexion Google';
     $('#account-name').textContent=user?(user.displayName||user.email||'Mon compte'):'';
     $('#google-logout').hidden=!user;$('#google-logout').disabled=pending;
     $('#save-course').textContent=user?'Enregistrer dans mon compte':'Enregistrer sur cet appareil';
@@ -71,15 +82,32 @@ export async function mountAccount(editor) {
   $('#show-library').onclick=()=>{if(!ready)return;dialog.showModal();run(token=>load(false,token));};
   $('#close-library').onclick=()=>dialog.close();dialog.onclick=event=>{if(event.target===dialog)dialog.close();};
   $('#refresh-library').onclick=()=>run(token=>load(false,token));$('#more-courses').onclick=()=>run(token=>load(true,token));
-  $('#google-login').onclick=()=>{if(!cloud)return;run(async()=>{if(editor.isBusy())throw Error('Termine le traitement en cours avant de te connecter.');await cloud.login();});};
-  $('#google-logout').onclick=()=>run(async()=>{if(editor.isBusy())throw Error('Termine ou annule le traitement en cours avant de te déconnecter.');await cloud.logout();});
+  $('#google-login').onclick=async()=>{
+    if(!configured){showAuth('La connexion Google n’est pas configurée dans cette version. Actualise la page pour charger la dernière version de Déclic.','error');return;}
+    if(pending||initializing)return;
+    if(!cloud){await initializeCloud(false);return;}
+    if(editor.isBusy()){showAuth('Termine ou annule le traitement du cours avant de te connecter.','error');return;}
+    pending=true;connecting=true;update();showAuth('La fenêtre Google va s’ouvrir. Choisis ton compte pour continuer.');
+    try{await cloud.login();showAuth(cloud.temporarySession?'Tu es connecté. Ce navigateur ne conserve pas la connexion après fermeture ; tes cours restent dans ton compte Google.':'Tu es connecté à ton compte Google.','success');}
+    catch(error){showAuthError(error);}
+    finally{pending=false;connecting=false;update();}
+  };
+  $('#google-logout').onclick=()=>run(async()=>{
+    try{if(editor.isBusy())throw Error('Termine ou annule le traitement en cours avant de te déconnecter.');await cloud.logout();showAuth('Tu es déconnecté. Les cours de ton compte sont masqués.','success');}
+    catch(error){showAuthError(error);throw error;}
+  });
   document.addEventListener('declic-contentchange',update);$('#course-title').oninput=update;
-  if(!googleConfigured)say('La connexion Google sera bientôt activée. Tu peux déjà enregistrer tes cours sur cet appareil.');
+  if(!configured)say('La connexion Google sera bientôt activée. Tu peux déjà enregistrer tes cours sur cet appareil.');
   update();
-  if(googleConfigured){
+  async function initializeCloud(silent=true){
+    if(initializing||!configured)return;
+    initializing=true;ready=false;update();
+    if(!silent)showAuth('Préparation de la connexion Google…');
+    let timer;
     try{
-      cloud=await accountClient();
-      cloud.listen(value=>{
+      cloud=await Promise.race([connect(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Le chargement de Google prend trop de temps. Vérifie ta connexion et clique sur Réessayer Google.')),20000);})]);
+      unsubscribe?.();
+      unsubscribe=cloud.listen(value=>{
         const previous=user?.uid;
         epoch++;user=value;ready=true;cursor=null;
         if(previous&&previous!==value?.uid){editor.clear();resetCurrent();dialog.close();}
@@ -87,7 +115,10 @@ export async function mountAccount(editor) {
         $('#course-list').replaceChildren();$('#more-courses').hidden=true;
         say(user?'Connecté. Les prochains enregistrements seront sauvegardés dans ton compte. Tes cours locaux restent sur cet appareil.':'Déconnecté. Les cours de ton compte sont masqués.');update();
         if(dialog.open)run(token=>load(false,token));
-      });
-    }catch(error){ready=true;say(accountError(error));update();}
+      },error=>{ready=true;cloud=null;showAuthError(error);update();});
+      if(!silent)showAuth('La connexion est prête. Clique à nouveau sur Connexion Google pour ouvrir la fenêtre.');
+    }catch(error){ready=true;cloud=null;showAuthError(error);}
+    finally{clearTimeout(timer);initializing=false;update();}
   }
+  if(configured)await initializeCloud();
 }

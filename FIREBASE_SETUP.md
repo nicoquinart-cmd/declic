@@ -73,3 +73,13 @@ Un succès des tests sur émulateur ne prouve pas qu’un projet réel est confi
 Copier `.env.example` vers `.env.local` et renseigner uniquement la configuration web publique. Redémarrer Vite après modification. Ne pas versionner `.env.local`.
 
 `npm run test:library` teste la bibliothèque locale dans Chrome. `npm run test:rules` lance l’émulateur Firestore avec un projet fictif `demo-declic` et vérifie les accès de deux utilisateurs et d’un invité. Java 21 et le téléchargement officiel de l’émulateur sont nécessaires ; aucun vrai projet ni compte Google n’est utilisé par ce test.
+
+## Si le bouton Google semble ne rien faire
+
+La connexion affiche maintenant sa progression et ses erreurs juste sous l’en-tête du site. Un échec de chargement permet de cliquer sur **Réessayer Google**. Sur les navigateurs qui bloquent les stockages persistants, la connexion peut rester temporaire : les cours du compte restent sur Firebase, mais il faudra se reconnecter après fermeture.
+
+- `auth/configuration-not-found` : initialiser Authentication, puis activer Google dans le projet `declic-revision`.
+- `auth/unauthorized-domain` : ajouter `nicoquinart-cmd.github.io` aux domaines autorisés.
+- `auth/popup-blocked` ou navigateur intégré : ouvrir le site directement dans Chrome ou Safari et autoriser la fenêtre de connexion.
+
+Après une modification dans Firebase, actualiser le site avant de réessayer. Le test `npm run test:auth` simule les réponses du service et vérifie que les erreurs restent visibles ; il ne connecte pas de vrai compte Google.

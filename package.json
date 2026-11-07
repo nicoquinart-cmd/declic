@@ -15,7 +15,8 @@
     "test:audio": "node tests/browser-audio.mjs",
     "test:mindmap": "node tests/browser-mindmap.mjs",
     "test:rules": "firebase emulators:exec --only firestore --project demo-declic \"node tests/firestore.rules.mjs\"",
-    "test:library": "node tests/browser-library.mjs"
+    "test:library": "node tests/browser-library.mjs",
+    "test:auth": "node tests/browser-auth.mjs"
   },
   "dependencies": {
     "@diffusionstudio/piper-wasm": "^1.0.0",

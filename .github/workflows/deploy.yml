@@ -40,6 +40,8 @@ jobs:
           VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
           VITE_FIREBASE_PROJECT_ID: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
           VITE_FIREBASE_APP_ID: ${{ vars.VITE_FIREBASE_APP_ID }}
+      - name: Vérifier les retours de connexion Google
+        run: npm run test:auth
       - name: Vérifier la bibliothèque de cours
         run: npm run test:library
       - uses: actions/setup-java@v4
