@@ -1,6 +1,6 @@
 # Activer Google et les cours synchronisés sur Déclic
 
-Le site peut déjà enregistrer et rouvrir des cours **sur l’appareil utilisé**. Pour retrouver ses cours sur plusieurs appareils, il faut configurer le service Firebase ci-dessous. La connexion Google reste désactivée tant que la configuration n’est pas renseignée.
+Le site peut déjà enregistrer et rouvrir des cours **sur l’appareil utilisé**. Pour retrouver ses cours sur plusieurs appareils, il faut configurer le service Firebase ci-dessous. La configuration publique du projet `declic-revision` est maintenant intégrée au code. Il reste à activer le fournisseur Google, autoriser le domaine et publier les règles Firestore dans ce projet.
 
 ## 1. Créer le projet gratuit
 
@@ -48,8 +48,12 @@ Ces champs identifient l’application web et sont publics dans un site Firebase
 
 ## 5. Activer sur GitHub Pages
 
+La configuration Web publique de `declic-revision` fournie par le propriétaire est intégrée dans `src/account/public-config.js` : il n’est pas nécessaire d’ajouter des variables GitHub pour ce projet.
+
+Pour utiliser un autre projet :
+
 1. Ouvrir https://github.com/nicoquinart-cmd/declic/settings/variables/actions .
-2. Ajouter les quatre variables de dépôt du tableau avec leurs valeurs Firebase correspondantes.
+2. Ajouter les quatre variables du tableau ensemble. Une surcharge partielle ne mélange pas les paramètres de deux projets.
 3. Ouvrir l’onglet **Actions → Publier Déclic → Run workflow**.
 4. Après le succès, actualiser le site. Le bouton **Connexion Google** devient disponible.
 5. Se connecter, saisir un titre et cliquer **Enregistrer dans mon compte**. Puis vérifier **Mes cours** et rouvrir ce cours sur un autre appareil connecté au même compte.
