@@ -2,7 +2,7 @@ import { groupTopics } from './themes.js';
 import { balanceBranches } from './mindmap-layout.js';
 const NS = 'http://www.w3.org/2000/svg';
 const COLORS = [
-  {line:'#819955',fill:'#edf3e2'}, {line:'#539994',fill:'#e5f4f1'},
+  {line:'#70a9d4',fill:'#e8f5ff'}, {line:'#679fc4',fill:'#edf8ff'},
   {line:'#aa82b7',fill:'#f3eaf7'}, {line:'#ca9452',fill:'#fff2df'},
   {line:'#7395c1',fill:'#e9f0fb'}, {line:'#c08289',fill:'#fbecef'},
 ];
@@ -50,12 +50,12 @@ function drawMap(topics,title,{details=false,onSelect}={}) {
   const svg=element('svg',{xmlns:NS,viewBox:`0 0 ${width} ${height}`,role:'img','aria-label':`Carte mentale : ${title}`,class:'mindmap-svg'});
   svg.append(element('title',{},`Carte mentale : ${title}`));
   svg.append(element('desc',{},'Sujet central : '+title+'. '+groupTopics(topics).map(group=>'Thématique : '+group.title+'. '+group.topics.map(topic=>topic.title+' : '+topic.details).join(' ')).join(' ')));
-  svg.append(element('rect',{width,height,fill:'#fafcf8'}));
+  svg.append(element('rect',{width,height,fill:'#f6fbff'}));
   const links=element('g',{'aria-hidden':'true'}),nodes=element('g');svg.append(links,nodes);
   const box=(x,y,w,h,lines,color,size=16,bold=false,kind='')=>{
     const group=element('g',{class:kind});
     group.append(element('rect',{x,y,width:w,height:h,rx:kind==='mindmap-root'?26:18,fill:color.fill,stroke:color.line,'stroke-width':kind==='mindmap-root'?0:1}));
-    const label=element('text',{'font-family':'Arial, sans-serif','font-size':size,'font-weight':bold?600:400,fill:kind==='mindmap-root'?'#fff':'#344238','text-anchor':'middle'});
+    const label=element('text',{'font-family':'Arial, sans-serif','font-size':size,'font-weight':bold?600:400,fill:kind==='mindmap-root'?'#234c70':'#2d4355','text-anchor':'middle'});
     const startY=y+h/2-(lines.length-1)*(size+5)/2+size*.34;
     lines.forEach((line,index)=>label.append(element('tspan',{x:x+w/2,y:startY+index*(size+5)},line.trim())));
     group.append(label);nodes.append(group);
@@ -68,12 +68,12 @@ function drawMap(topics,title,{details=false,onSelect}={}) {
     const group=element('g',{class:'mindmap-topic',...(onSelect?{role:'button',tabindex:0,'aria-label':`Voir l’explication : ${topic.original.title}`}:{})});
     group.append(element('rect',{x,y,width:270,height:topic.height,rx:16,fill:'#fff',stroke:color.line,'stroke-opacity':.5,'stroke-width':1.2}));
     group.append(element('rect',{x:x+12,y:y+14,width:4,height:topic.height-28,rx:2,fill:color.line}));
-    const heading=element('text',{'font-family':'Arial, sans-serif','font-size':16,'font-weight':600,fill:'#344238','text-anchor':'middle',class:'mindmap-subtitle'});
+    const heading=element('text',{'font-family':'Arial, sans-serif','font-size':16,'font-weight':600,fill:'#2d4355','text-anchor':'middle',class:'mindmap-subtitle'});
     const titleY=details?y+25:y+topic.height/2-(topic.title.length-1)*21/2+5;
     topic.title.forEach((line,index)=>heading.append(element('tspan',{x:x+140,y:titleY+index*21},line.trim())));
     group.append(heading);
     if(details){
-      const detail=element('text',{'font-family':'Arial, sans-serif','font-size':14,fill:'#4d5b4e','text-anchor':'middle',class:'mindmap-detail'});
+      const detail=element('text',{'font-family':'Arial, sans-serif','font-size':14,fill:'#4a6276','text-anchor':'middle',class:'mindmap-detail'});
       topic.details.forEach((line,index)=>detail.append(element('tspan',{x:x+135,y:y+topic.title.length*21+38+index*19},line.trim())));
       group.append(detail);
     }
@@ -100,7 +100,7 @@ function drawMap(topics,title,{details=false,onSelect}={}) {
       top+=entry.height+60;
     }
   }
-  box(635,(height-rootHeight)/2,190,rootHeight,rootLines,{line:'#354f36',fill:'#354f36'},19,true,'mindmap-root');
+  box(635,(height-rootHeight)/2,190,rootHeight,rootLines,{line:'#b7d8ef',fill:'#dcefff'},19,true,'mindmap-root');
   return {svg,width,height};
 }
 export function mountMindMap(container,topics) {

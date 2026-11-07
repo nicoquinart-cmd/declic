@@ -16,10 +16,10 @@ export async function createSheetsPdf(sheets,courseTitle='Mes révisions'){
   pdf.setProperties({title:courseTitle,author:'Déclic',subject:'Fiches de révision'});
   let y=30;
   const header=()=>{
-    pdf.setFont('Declic','bold');pdf.setFontSize(9);pdf.setTextColor(67,94,48);pdf.text('DÉCLIC · FICHES DE RÉVISION',20,15);pdf.setDrawColor(212,224,199);pdf.line(20,19,190,19);y=30;
+    pdf.setFont('Declic','bold');pdf.setFontSize(9);pdf.setTextColor(43,85,117);pdf.text('DÉCLIC · FICHES DE RÉVISION',20,15);pdf.setDrawColor(205,229,246);pdf.line(20,19,190,19);y=30;
   };
   const nextPage=()=>{pdf.addPage();header();};
-  const write=(text,size=10.5,bold=false,color=[56,68,50])=>{
+  const write=(text,size=10.5,bold=false,color=[45,63,79])=>{
     pdf.setFont('Declic',bold?'bold':'normal');pdf.setFontSize(size);pdf.setTextColor(...color);
     const lines=pdf.splitTextToSize(String(text).replace(/\r\n/g,'\n'),168);
     const leading=size*.3528*1.5;
@@ -28,7 +28,7 @@ export async function createSheetsPdf(sheets,courseTitle='Mes révisions'){
   header();
   sheets.forEach((sheet,index)=>{
     if(index)nextPage();
-    write(`FICHE ${String(index+1).padStart(2,'0')}`,9,true,[117,140,91]);y+=3;
+    write(`FICHE ${String(index+1).padStart(2,'0')}`,9,true,[62,103,137]);y+=3;
     write(sheet.title||'Fiche sans titre',20,true);y+=7;
     for(const section of sheet.sections){
       if(!section.title.trim()&&!section.content.trim())continue;
@@ -37,7 +37,7 @@ export async function createSheetsPdf(sheets,courseTitle='Mes révisions'){
     if(sheet.notes.trim()){if(y>246)nextPage();write('Mes notes et exemples',12,true);y+=2;write(sheet.notes);}
   });
   const pages=pdf.getNumberOfPages();
-  for(let page=1;page<=pages;page++){pdf.setPage(page);pdf.setFont('Declic','normal');pdf.setFontSize(8);pdf.setTextColor(124,137,112);pdf.text('Révisions personnelles · Déclic',20,287);pdf.text(`${page} / ${pages}`,190,287,{align:'right'});}
+  for(let page=1;page<=pages;page++){pdf.setPage(page);pdf.setFont('Declic','normal');pdf.setFontSize(8);pdf.setTextColor(89,112,132);pdf.text('Révisions personnelles · Déclic',20,287);pdf.text(`${page} / ${pages}`,190,287,{align:'right'});}
   return pdf.output('blob');
 }
 export async function downloadSheetsPdf(sheets,title){
