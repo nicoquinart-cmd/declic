@@ -6,3 +6,8 @@
 - [ONNX Runtime](https://github.com/microsoft/onnxruntime) est distribué sous licence MIT.
 
 Les fichiers JavaScript et WebAssembly sont copiés depuis les paquets npm verrouillés, sans modification des binaires. Le script Emscripten reçoit uniquement une ligne d’export ES module pour être chargé par le worker.
+
+# Export PDF
+
+- jsPDF est utilisé sous licence MIT pour générer les documents dans le navigateur.
+- Les polices DejaVu Sans et DejaVu Sans Bold proviennent du paquet système `fonts-dejavu-core`. Leur licence et les mentions de copyright sont conservées dans `src/assets/fonts/LICENSE.txt` et distribuées avec le site dans `licenses/dejavu-fonts.txt`.

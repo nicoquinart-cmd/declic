@@ -2,7 +2,7 @@
 
 Sélectionne ou dépose plusieurs PDF et photos à la fois (20 Mo par fichier). Les documents sont traités dans l’ordre et leur texte est ajouté aux notes déjà présentes. Une erreur sur un fichier ne bloque pas les suivants ; la liste indique les imports réussis et les échecs. Le bouton Effacer vide le texte et cette liste.
 
-Application de révision en français : import de PDF texte et de photos (OCR français/anglais), résumé, fiches à déplier, carte mentale visuelle, lecture vocale et export Markdown.
+Application de révision en français : import de PDF texte et de photos (OCR français/anglais), résumé, fiches de révision modifiables et téléchargeables en PDF, carte mentale visuelle, lecture vocale et export Markdown.
 
 ## Démarrage
 
@@ -65,3 +65,8 @@ La bibliothèque « Mes cours » conserve le texte et les révisions. Sans conne
 La configuration du projet, de Google, des règles privées et des variables GitHub est décrite dans [FIREBASE_SETUP.md](FIREBASE_SETUP.md). La configuration publique du projet `declic-revision` est intégrée. Le fournisseur Google, le domaine autorisé et les règles Firestore doivent être activés dans la console du projet. Les nouveaux enregistrements cloud sont bloqués si le contrôle invité révèle une base ouverte ou absente. Ne jamais mettre de clé de compte de service dans l’application.
 
 `npm run test:auth` vérifie les retours de connexion (progression, erreurs visibles, relance et déconnexion) avec un service d’authentification simulé. Il ne prouve pas qu’un compte Google réel peut se connecter ; cela dépend également des réglages du projet Firebase.
+
+
+Les fiches de révision sont éditables : titres, sous-titres, contenu et notes personnelles. On peut ajouter ou supprimer des parties et des fiches, puis télécharger une fiche ou le dossier complet en PDF A4. La génération PDF et les polices intégrées restent locales au navigateur. Les longs textes passent sur plusieurs pages. Le bouton Enregistrer conserve les modifications avec le cours ; régénérer les révisions demande confirmation avant de remplacer des fiches modifiées.
+
+La carte mentale démarre en vue compacte. Un clic sur une notion affiche son explication ; une option affiche tous les textes. Les branches sont réparties selon leur hauteur réelle, y compris pour une thématique unique (deux branches de même couleur, avec une mention « suite »). Les thèmes absents ou génériques sont regroupés par vocabulaire du cours ; ce classement lexical peut être corrigé avec « Modifier le classement des thèmes ». Les corrections sont enregistrables avec les révisions. L’export SVG garde toutes les explications.

@@ -16,7 +16,8 @@
     "test:mindmap": "node tests/browser-mindmap.mjs",
     "test:rules": "firebase emulators:exec --only firestore --project demo-declic \"node tests/firestore.rules.mjs\"",
     "test:library": "node tests/browser-library.mjs",
-    "test:auth": "node tests/browser-auth.mjs"
+    "test:auth": "node tests/browser-auth.mjs",
+    "test:sheets": "node tests/browser-sheets.mjs"
   },
   "dependencies": {
     "@diffusionstudio/piper-wasm": "^1.0.0",
@@ -24,6 +25,7 @@
     "@tesseract.js-data/eng": "^1.0.0",
     "@tesseract.js-data/fra": "^1.0.0",
     "firebase": "^13.2.0",
+    "jspdf": "^4.2.1",
     "onnxruntime-web": "^1.22.0-dev.20250409-89f8206ba4",
     "pdfjs-dist": "^5.4.394",
     "tesseract.js": "^6.0.1",

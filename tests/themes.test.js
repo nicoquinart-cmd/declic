@@ -2,28 +2,22 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {groupTopics,thematicMarkdown} from '../src/themes.js';
 import {parseRevisions} from '../src/ai/revisions.js';
-test('regroupe les sous-titres sous les thèmes proposés par le modèle',()=>{
+const mixed=[{title:'Budget',details:'Le budget de l’État décrit les recettes fiscales et les dépenses publiques.'},{title:'Impôts',details:'Les impôts financent les recettes fiscales de l’État et son budget.'},{title:'Métaphore',details:'La métaphore est une figure de style qui rapproche deux images dans un poème.'},{title:'Comparaison',details:'La comparaison est une figure de style qui rapproche des images avec un outil comparatif.'}];
+test('conserve des thèmes explicites utiles et leurs sous-titres',()=>{
  const result=parseRevisions('1. Causes > Crise financière : Le royaume est fortement endetté.\n2. Causes > Inégalités sociales : Les privilèges provoquent des tensions.\n3. Conséquences > Nouveaux droits : La déclaration affirme de nouveaux droits.\n4. Conséquences > Institutions : Le système politique est transformé.');
- const groups=groupTopics(result.topics);
- assert.deepEqual(groups.map(group=>group.title),['Causes','Conséquences']);
- assert.deepEqual(groups[0].topics.map(topic=>topic.title),['Crise financière','Inégalités sociales']);
- assert.equal(groups[1].topics.length,2);
- assert.match(thematicMarkdown(result.topics),/## Causes\n\n### Crise financière/);
+ const groups=groupTopics(result.topics);assert.deepEqual(groups.map(group=>group.title),['Causes','Conséquences']);assert.equal(groups[0].topics.length,2);assert.match(thematicMarkdown(result.topics),/## Causes\n\n### Crise financière/);
 });
-test('classe les notions sans thème en conservant chaque information',()=>{
- const topics=[{title:'Lumière',details:'Elle est absorbée par les plantes.'},{title:'Eau',details:'Elle constitue une ressource.'},{title:'Glucose',details:'Il est produit par les plantes.'},{title:'Chloroplastes',details:'Ils contiennent la chlorophylle.'}];
- const groups=groupTopics(topics);
- assert.deepEqual(groups.find(group=>group.title==='Ressources et conditions').topics.map(topic=>topic.title),['Lumière','Eau']);
- assert.equal(groups.flatMap(group=>group.topics).length,topics.length);
- assert.ok(groups.flatMap(group=>group.topics).every(topic=>topics.includes(topic)));
- assert.ok(topics.every(topic=>!('theme' in topic)));
+test('rapproche les informations apparentées sans catégories prédéfinies',()=>{
+ const groups=groupTopics(mixed);assert.deepEqual(groups.map(group=>group.topics.map(topic=>topic.title)),[['Budget','Impôts'],['Métaphore','Comparaison']]);
+ assert.equal(groups.flatMap(group=>group.topics).length,mixed.length);assert.ok(mixed.every(topic=>!('theme' in topic)));
 });
-test('réunit les mêmes classes sans tenir compte des accents ou de la casse',()=>{
- const groups=groupTopics([{theme:'Économie',title:'Budget',details:'Budget du royaume.'},{theme:'economie',title:'Dette',details:'Dette du royaume.'}]);
- assert.equal(groups.length,1);assert.equal(groups[0].topics.length,2);
+test('ne transforme pas les notions inconnues en un sac générique',()=>{
+ const groups=groupTopics([{title:'Orbitales',details:'Les électrons occupent des orbitales autour du noyau atomique.'},{title:'Sonnet',details:'Un sonnet contient quatorze vers organisés en strophes.'}]);assert.equal(groups.length,2);assert.ok(groups.every(group=>group.title!=='Notions fondamentales'));
 });
-
-test('ne confond pas les mots du cours avec un fragment de mot-clé',()=>{
- const groups=groupTopics([{title:'Nouveaux droits',details:'Ces droits nouveaux sont inscrits dans un texte.'}]);
- assert.equal(groups[0].title,'Notions fondamentales');
+test('ignore les titres fictifs du modèle et respecte les corrections manuelles',()=>{
+ assert.equal(groupTopics(mixed.map(topic=>({...topic,theme:'Premier thème'}))).length,2);
+ assert.equal(groupTopics(mixed.map(topic=>({...topic,theme:'Mon thème',themeSource:'manual'}))).length,1);
+});
+test('réunit une même classe malgré les accents et la casse',()=>{
+ const groups=groupTopics([{theme:'Économie',title:'Budget',details:'Budget du royaume.'},{theme:'economie',title:'Dette',details:'Dette du royaume.'}]);assert.equal(groups.length,1);assert.equal(groups[0].topics.length,2);
 });

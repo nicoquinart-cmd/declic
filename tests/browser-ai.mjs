@@ -42,7 +42,7 @@ try{
     assert.match(status,/révisions sont prêtes/,status);
     assert.match(await page.locator('.mode').innerText(),/IA sur cet appareil/);
     assert.match(await page.locator('.prose').innerText(),/photosynth|chloroph|glucose/i);
-    await page.getByRole('tab',{name:'Fiches'}).click();assert.ok(await page.locator('details').count()>0);
+    await page.getByRole('tab',{name:'Fiches'}).click();assert.ok(await page.locator('.revision-sheet').count()>0);
     await page.getByRole('tab',{name:'Carte'}).click();assert.ok(await page.locator('.mindmap-topic').count()>0);assert.ok(await page.locator('.mindmap-theme').count()>0);
     await page.getByRole('tab',{name:'Audio'}).click();assert.ok(await page.locator('.prose').innerText());
   }

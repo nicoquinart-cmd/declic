@@ -51,6 +51,8 @@ jobs:
       - name: Vérifier l’isolation des comptes dans Firestore
         run: npm run test:rules
         timeout-minutes: 5
+      - name: Vérifier les fiches modifiables et leur PDF
+        run: npm run test:sheets
       - name: Vérifier la carte mentale
         run: npm run test:mindmap
       - name: Vérifier la génération IA réelle dans Chrome
