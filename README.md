@@ -2,7 +2,7 @@
 
 Sélectionne ou dépose plusieurs PDF et photos à la fois (20 Mo par fichier). Les documents sont traités dans l’ordre et leur texte est ajouté aux notes déjà présentes. Une erreur sur un fichier ne bloque pas les suivants ; la liste indique les imports réussis et les échecs. Le bouton Effacer vide le texte et cette liste.
 
-Application de révision en français : import de PDF texte et de photos (OCR français/anglais), résumé, fiches à déplier, carte mentale structurée, lecture vocale et export Markdown.
+Application de révision en français : import de PDF texte et de photos (OCR français/anglais), résumé, fiches à déplier, carte mentale visuelle, lecture vocale et export Markdown.
 
 ## Démarrage
 
@@ -53,3 +53,5 @@ Le moteur WebAssembly est servi localement avec l’application ; les modèles s
 `npm test` vérifie la lecture des notions rédigées par le modèle et le prompt. Après compilation avec `DEPLOY_BASE=/declic/ npm run build`, `npm run test:ai` lance Chrome, télécharge le vrai modèle et vérifie une génération complète avant le déploiement GitHub Pages. Chrome doit être installé ; sinon définir `CHROME_PATH` vers Chromium. Ce test requiert Internet, de la mémoire et plusieurs minutes. Les variantes `node tests/browser-ai.mjs --offline` et `--simulate` vérifient respectivement les erreurs de téléchargement et l’interface avec un worker simulé ; elles ne valident pas le modèle.
 
 `npm run test:audio` vérifie dans Chrome la génération d’une courte phrase française avec le vrai modèle, le décodage du WAV, sa durée et la présence d’un signal. `node tests/browser-audio.mjs --simulate` teste les contrôles avec un worker simulé ; `--offline` vérifie le message d’erreur et le secours sans téléchargement réussi. Les tests automatiques ne mesurent pas la perception du naturel de la voix.
+
+La carte mentale présente le sujet central, les notions et leurs explications sous forme de branches colorées. Le sujet central est modifiable. Le zoom, le déplacement, l’affichage agrandi et le téléchargement SVG fonctionnent sans service externe.

@@ -43,7 +43,7 @@ try{
     assert.match(await page.locator('.mode').innerText(),/IA sur cet appareil/);
     assert.match(await page.locator('.prose').innerText(),/photosynth|chloroph|glucose/i);
     await page.getByRole('tab',{name:'Fiches'}).click();assert.ok(await page.locator('details').count()>0);
-    await page.getByRole('tab',{name:'Carte'}).click();assert.ok(await page.locator('.branches article').count()>0);
+    await page.getByRole('tab',{name:'Carte'}).click();assert.ok(await page.locator('.mindmap-topic').count()>0);
     await page.getByRole('tab',{name:'Audio'}).click();assert.ok(await page.locator('.prose').innerText());
   }
   assert.equal(await page.locator('#cancel-ai').isHidden(),true);
