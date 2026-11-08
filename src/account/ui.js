@@ -8,10 +8,12 @@ export async function mountAccount(editor,{configured=googleConfigured,connect=a
   document.querySelector('header .badge').replaceWith(account);
   const toolbar=document.createElement('div');toolbar.className='course-toolbar';
   toolbar.innerHTML='<label>Titre du cours<input id="course-title" maxlength="120" placeholder="Ex. Biologie — La photosynthèse"></label><button id="save-course" class="button secondary">Enregistrer sur cet appareil</button><p id="account-status" class="hint" role="status" aria-live="polite"></p>';
-  document.querySelector('.workspace .panel').prepend(toolbar);
+  const tools=document.querySelector('.course-tools');if(tools)tools.append(toolbar);else document.querySelector('.workspace .panel').prepend(toolbar);
   const navigation=document.createElement('div');navigation.className='library-navigation';navigation.innerHTML='<button id="new-course" class="nav active">＋ Nouveau cours</button><button id="show-library" class="nav">▤ Mes cours</button>';
   document.querySelector('aside .nav').replaceWith(navigation);
   const agenda=mountAgenda(navigation);agenda.setOwner(null);
+  document.querySelector('#home-library')?.addEventListener('click',()=>document.querySelector('#show-library').click());
+  document.querySelector('#home-agenda')?.addEventListener('click',()=>document.querySelector('#show-agenda').click());
   const dialog=document.createElement('dialog');dialog.className='library-dialog';
   dialog.innerHTML='<div class="library-header"><div><h2>Mes cours enregistrés</h2><p id="library-scope" class="hint"></p></div><button class="button secondary" id="close-library">Fermer</button></div><p id="library-status" class="hint" role="status"></p><div id="course-list"></div><div class="library-footer"><button id="refresh-library" class="button secondary">Actualiser</button><button id="more-courses" class="button secondary" hidden>Voir les suivants</button></div>';
   document.body.append(dialog);
@@ -40,6 +42,7 @@ export async function mountAccount(editor,{configured=googleConfigured,connect=a
     $('#new-course').disabled=pending||editor.isBusy();
     $('#library-scope').textContent=user?'Cours privés synchronisés avec ton compte Google.':'Sur cet appareil uniquement. Ces cours ne sont pas synchronisés avec un compte Google. Effacer les données du navigateur les supprimera.';
     $('#more-courses').disabled=pending;
+    const homeLibrary=document.querySelector('#home-library');if(homeLibrary)homeLibrary.disabled=!ready||pending;
   };
   const resetCurrent=(clearTitle=true)=>{currentId=null;currentOwner=null;if(clearTitle)$('#course-title').value='';};
   const entries=(courses,append)=>{
