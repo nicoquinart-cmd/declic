@@ -11,3 +11,8 @@ export function localDay(now=new Date()){return `${now.getFullYear()}-${String(n
 export function nextEvent(events,today=localDay()){return [...events].filter(event=>event.date>=today).sort((a,b)=>a.date.localeCompare(b.date)||a.title.localeCompare(b.title,'fr'))[0]||null;}
 export function daysUntil(date,today=localDay()){return Math.round((Date.parse(date+'T12:00:00Z')-Date.parse(today+'T12:00:00Z'))/86400000);}
 export function readEvents(storage,key){const raw=storage.getItem(key);if(!raw)return [];const data=JSON.parse(raw);if(!Array.isArray(data)||data.length>500)throw Error('Agenda illisible.');return data.map(event=>{if(typeof event.id!=='string'||!event.id)throw Error('Agenda illisible.');return {...validateEvent(event),id:event.id};});}
+export function monthDays(month){
+ const [year,index]=month.split('-').map(Number),first=new Date(year,index-1,1,12),offset=(first.getDay()+6)%7;
+ return Array.from({length:42},(_,i)=>{const date=new Date(year,index-1,1-offset+i,12);return {date:localDay(date),day:date.getDate(),inMonth:date.getMonth()===index-1};});
+}
+export function shiftMonth(month,delta){const [year,index]=month.split('-').map(Number);return localDay(new Date(year,index-1+delta,1,12)).slice(0,7);}
